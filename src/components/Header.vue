@@ -10,11 +10,6 @@
       "
     >
       <div class="container-fluid">
-        <!-- Brand -->
-        <!-- <a class="navbar-brand" href="https://mdbecommerce.com/">
-          <i class="fab fa-mdb fa-3x" alt="mdb logo"></i>
-        </a> -->
-
         <!-- Collapse button -->
         <button
           class="navbar-toggler"
@@ -42,31 +37,46 @@
                 Shop
               </router-link>
             </li>
-
+            <li class="nav-item" v-show="isLoggedIn">
+              <router-link class="nav-link waves-effect" to="/orders">
+                Orders
+              </router-link>
+            </li>
             <li class="nav-item">
               <router-link
                 class="nav-link navbar-link-2 waves-effect"
                 to="/cart"
               >
-                <span class="badge badge-pill red">1</span>
+                <span class="badge badge-pill red">{{ cart.length }}</span>
                 <i class="fas fa-shopping-cart pl-0"></i>
               </router-link>
             </li>
-            <li class="nav-item">
+            <li v-if="isLoggedIn" class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                id="navbarDropdownMenuLink-55"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <img
+                  src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg"
+                  class="rounded-circle"
+                  style="height: 34px"
+                  alt="avatar image"
+                />
+              </a>
+              <div
+                class="dropdown-menu dropdown-menu-lg-right"
+                aria-labelledby="navbarDropdownMenuLink-55"
+              >
+                <a class="dropdown-item" @click="logout" href="#!">Logout</a>
+              </div>
+            </li>
+
+            <li v-else class="nav-item">
               <router-link class="nav-link waves-effect" to="/login">
                 Login
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link
-                type="button"
-                class="
-                  btn btn-outline-info btn-md btn-rounded btn-navbar
-                  waves-effect waves-light
-                "
-                to="/register"
-              >
-                Register
               </router-link>
             </li>
           </ul>
@@ -94,6 +104,7 @@
 <script>
 import { computed } from "vue";
 import { useStore } from "vuex";
+
 export default {
   name: "Header",
   setup() {
@@ -101,9 +112,24 @@ export default {
     let cart = computed(() => {
       return store.state.cart;
     });
+    function isLoginPage() {
+      if (this.$route.path === "/login") {
+        return true;
+      } else {
+        return false;
+      }
+    }
     return {
       cart,
+      isLoggedIn: computed(() => store.getters.isLoggedIn),
+      isLoginPage,
     };
+  },
+  methods: {
+    async logout() {
+      await this.$store.dispatch("LogOut");
+      this.$router.push("/login");
+    },
   },
 };
 </script>

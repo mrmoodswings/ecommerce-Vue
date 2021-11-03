@@ -2,10 +2,10 @@
   <div class="row mb-4">
     <div class="col-md-5 col-lg-3 col-xl-3">
       <div class="view zoom overlay z-depth-1 rounded mb-3 mb-md-0">
-        <img class="img-fluid w-100" :src="product.url" alt="Sample" />
+        <img class="img-fluid w-100" :src="BASE_URL+product.image" alt="Sample" />
         <a href="#!">
           <div class="mask waves-effect waves-light">
-            <img class="img-fluid w-100" :src="product.url" />
+            <img class="img-fluid w-100" :src="BASE_URL+product.image" />
             <div class="mask rgba-black-slight waves-effect waves-light"></div>
           </div>
         </a>
@@ -43,7 +43,7 @@
           <div>
             <a
               href="#!"
-              type="button"
+              type="button" @click="removeItem()"
               class="card-link-secondary small text-uppercase mr-3"
               ><i class="fas fa-trash-alt mr-1"></i> Remove item
             </a>
@@ -66,14 +66,16 @@ export default {
   props: ["product"],
   components: {},
   setup(props) {
+    let products = { ...props };
     const store = useStore();
+    const BASE_URL = 'http://localhost:3000/uploads/';
     let cart = computed(function () {
       return store.state.cart;
     });
 
     let itemQuantity = computed(function () {
       let get_product = cart.value.filter(
-        (item) => item.id == props.product.id
+        (item) => item.id == products.product.id
       );
 
       return get_product[0].quantity;
@@ -82,12 +84,11 @@ export default {
     function changeQuantity(action = "add") {
       if (action == "add") {
         if (props.product.quantity)
-          props.product.quantity = props.product.quantity + 1;
-        console.log(props.product);
+          products.product.quantity = products.product.quantity + 1;
         store.commit("updateCartItem", props.product);
       } else {
         if (props.product.quantity > 1) {
-          // props.product.quantity = props.product.quantity - 1;
+          products.product.quantity = products.product.quantity - 1;
           store.commit("updateCartItem", props.product);
         } else {
           //Remove the item
@@ -105,6 +106,7 @@ export default {
       itemQuantity,
       changeQuantity,
       removeItem,
+      BASE_URL
     };
   },
 };

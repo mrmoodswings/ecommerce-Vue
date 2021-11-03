@@ -39,5 +39,8 @@ export default {
       products,
     };
   },
+   mounted() {
+    this.$store.dispatch("getProducts");
+  }
 };
 </script>

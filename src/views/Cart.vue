@@ -7,18 +7,23 @@
         </h4>
         <!--Grid row-->
         <div class="row">
-          <div class="col-lg-8">
+          <div :class="[cart.length>0?'col-lg-8':'col-lg-12']">
             <!-- Card -->
             <div class="card wish-list mb-4">
               <div class="card-body">
-                <h5 class="mb-4">Cart (<span>2</span> items)</h5>
+                <h4 class="text-center" v-show="isCartEmpty()">
+                  Cart is empty!!
+                </h4>
+                <h5 v-if="cart.length >0" class="mb-4">
+                  Cart (<span>{{ cart.length }}</span> items)
+                </h5>
 
                 <CartItem v-for="item in cart" :product="item" :key="item.id" />
                 <hr class="mb-4" />
               </div>
             </div>
           </div>
-          <CartTotal />
+          <CartTotal v-if="cart.length > 0" :total="totalPrice" :shipping="shippingCharge" title="Checkout" page="cart" />
         </div>
         <!--Grid row-->
       </section>
@@ -43,6 +48,23 @@ export default {
     let cart = computed(function () {
       return store.state.cart;
     });
+    function isCartEmpty() {
+      if (cart.value.length > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    function isCartNotEmpty() {
+      if (cart.value.length > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    let shippingCharge = computed(function () {
+      return store.state.shippingCharge;
+    });
 
     let totalPrice = computed(function () {
       return cart.value.reduce((total, next) => {
@@ -53,6 +75,9 @@ export default {
     return {
       cart,
       totalPrice,
+      shippingCharge,
+      isCartEmpty,
+      isCartNotEmpty,
     };
   },
 };

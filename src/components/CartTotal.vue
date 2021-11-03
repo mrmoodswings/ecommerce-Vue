@@ -17,8 +17,8 @@
               pb-0
             "
           >
-            Temporary amount
-            <span>$53.98</span>
+            Sub Total
+            <span>${{ total }}</span>
           </li>
           <li
             class="
@@ -26,12 +26,15 @@
               d-flex
               justify-content-between
               align-items-center
+              border-0
               px-0
+              pb-0
             "
           >
-            Shipping
-            <span>Gratis</span>
+            Shipping Charge
+            <span>${{ shipping }}</span>
           </li>
+
           <li
             class="
               list-group-item
@@ -44,21 +47,17 @@
             "
           >
             <div>
-              <strong>The total amount of</strong>
-              <strong>
-                <p class="mb-0">(including VAT)</p>
-              </strong>
+              <strong>Total</strong>
             </div>
-            <span><strong>$53.98</strong></span>
+            <span
+              ><strong>${{ total + shipping }}</strong></span
+            >
           </li>
         </ul>
-
-        <button
-          type="button"
-          class="btn btn-primary btn-block waves-effect waves-light"
-        >
-          go to checkout
-        </button>
+        
+        <router-link v-if="checkoutPage()" tag="button"  class="btn btn-primary btn-block waves-effect waves-light" to="/checkout" >{{title}}</router-link>
+          <button v-else @click="$emit('place-order')" type="button" class="btn btn-primary btn-block waves-effect waves-light">Make purchase</button>
+     
       </div>
     </div>
     <!-- Card -->
@@ -71,6 +70,25 @@
 <script>
 export default {
   name: "CartTotal",
+  props: {
+    total: Number,
+    shipping: Number,
+    title:String,
+    page:String
+  },
   components: {},
+  setup(props) {
+    const prop = {...props};
+    function checkoutPage() {
+      if(prop.page==='cart'){
+        return true
+      }else{
+        return false
+      }
+    }
+    return {
+      checkoutPage,
+    };
+  },
 };
 </script>

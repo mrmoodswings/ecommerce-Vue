@@ -6,18 +6,22 @@
       <div class="col-md-6">
         <!--Section: Content-->
         <section class="mb-5">
-          <form action="#!">
+          <form @submit="login">
             <div class="md-form md-outline">
               <input
-                type="email"
+                type="text"
                 id="defaultForm-email1"
                 class="form-control"
+                v-model="state.username"
               />
+              <span v-if="v$.username.$error" style="color: red">{{
+                v$.username.$errors[0].$message
+              }}</span>
               <label
                 data-error="wrong"
                 data-success="right"
                 for="defaultForm-email1"
-                >Your email</label
+                >Username</label
               >
             </div>
             <div class="md-form md-outline">
@@ -25,7 +29,11 @@
                 type="password"
                 id="defaultForm-pass1"
                 class="form-control"
+                v-model="state.password"
               />
+              <span v-if="v$.password.$error" style="color: red">{{
+                v$.password.$errors[0].$message
+              }}</span>
               <label
                 data-error="wrong"
                 data-success="right"
@@ -33,67 +41,20 @@
                 >Your password</label
               >
             </div>
-          </form>
 
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="form-check pl-0 mb-3">
-              <input
-                type="checkbox"
-                class="form-check-input filled-in"
-                id="new"
-              />
-              <label
-                class="
-                  form-check-label
-                  small
-                  text-uppercase
-                  card-link-secondary
-                "
-                for="new"
-                >Remember me</label
+            <div class="text-center pb-2">
+              <button
+                type="submit"
+                class="btn btn-primary mb-4 waves-effect waves-light"
               >
+                Sign in
+              </button>
+
+              <p>
+                Not a member? <router-link to="/register">Register</router-link>
+              </p>
             </div>
-
-            <p><a href="">Forgot password?</a></p>
-          </div>
-
-          <div class="text-center pb-2">
-            <button
-              type="submit"
-              class="btn btn-primary mb-4 waves-effect waves-light"
-            >
-              Sign in
-            </button>
-
-            <p>Not a member? <a href="">Register</a></p>
-
-            <p>or sign in with:</p>
-
-            <a
-              type="button"
-              class="btn-floating btn-fb btn-sm mr-1 waves-effect waves-light"
-            >
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a
-              type="button"
-              class="btn-floating btn-tw btn-sm mr-1 waves-effect waves-light"
-            >
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a
-              type="button"
-              class="btn-floating btn-li btn-sm mr-1 waves-effect waves-light"
-            >
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-            <a
-              type="button"
-              class="btn-floating btn-git btn-sm waves-effect waves-light"
-            >
-              <i class="fab fa-github"></i>
-            </a>
-          </div>
+          </form>
         </section>
         <!--Section: Content-->
       </div>
@@ -103,8 +64,56 @@
   </div>
 </template>
 <script>
+import useVuelidate from "@vuelidate/core";
+import { mapMutations } from "vuex";
+import { computed, reactive } from "vue";
+import { required } from "@vuelidate/validators";
 export default {
   name: "Login",
   components: {},
+  setup() {
+    const state = reactive({
+      username: "",
+      password: "",
+    });
+    const rules = computed(() => {
+      return {
+        username: {
+          required,
+        },
+        password: {
+          required,
+        },
+      };
+    });
+    const v$ = useVuelidate(rules, state);
+    return {
+      state,
+      v$,
+    };
+  },
+  methods: {
+    ...mapMutations(["setUser", "setToken"]),
+    async login(e) {
+      e.preventDefault();
+      this.v$.$validate();
+      if (!this.v$.$error) {
+        const res = await fetch("http://localhost:3000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            username: this.state.username,
+            password: this.state.password,
+          }),
+        });
+        const { user, token } = await res.json();
+        this.setUser(user);
+        this.setToken(token);
+        this.$router.push("/");
+      }
+    },
+  },
 };
 </script>

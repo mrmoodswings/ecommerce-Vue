@@ -29,13 +29,19 @@ export default {
   },
   setup() {
     const store = useStore();
+   
     let products = computed(() => {
       return store.state.products;
     });
 
     return {
       products,
+      
     };
+    
   },
+  mounted() {
+    this.$store.dispatch("getProducts");
+  }
 };
 </script>

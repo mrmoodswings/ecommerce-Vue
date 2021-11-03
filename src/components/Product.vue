@@ -4,10 +4,10 @@
     <!-- Card -->
     <div class="card">
       <div class="view zoom overlay">
-        <img class="img-fluid w-100" :src="product.url" alt="Sample" />
+        <img class="img-fluid w-100" :src="BASE_URL + product.image" alt="Sample" />
         <a href="#!">
           <div class="mask waves-effect waves-light">
-            <img class="img-fluid w-100" :src="product.url" />
+            <img class="img-fluid w-100" :src="BASE_URL +product.image" />
             <div class="mask rgba-black-slight waves-effect waves-light"></div>
           </div>
         </a>
@@ -49,6 +49,7 @@ export default {
   props: ["product"],
   setup(props) {
     const store = useStore();
+     const BASE_URL = 'http://localhost:3000/uploads/';
     let cart = computed(() => {
       return store.state.cart;
     });
@@ -74,6 +75,7 @@ export default {
       cart,
       itemAlreadyInCart,
       addToCart,
+      BASE_URL
     };
   },
 };

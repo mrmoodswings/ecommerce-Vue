@@ -1,54 +1,28 @@
 import { createStore } from "vuex";
-
+import axios from "axios";
+import VuexPersist from "vuex-persist";
+const vuexPersist = new VuexPersist({
+  key: "ecom-store",
+  storage: window.localStorage,
+});
 export default createStore({
   state: {
-    products: [
-      {
-        id: 1,
-        name: "Chelsea Shoes",
-        price: 200,
-        shortdesc: "Best Drip in the Market",
-        url: "images/chelsea-shoes.png",
-      },
-      {
-        id: 2,
-        name: "Kimono",
-        price: 50,
-        shortdesc: "Classy, Stylish, Dope",
-        url: "images/kimono.png",
-      },
-      {
-        id: 3,
-        name: "Watch",
-        price: 2500,
-        shortdesc: "Elegance built in",
-        url: "images/rolex.png",
-      },
-      {
-        id: 4,
-        name: "Wallet",
-        price: 80,
-        shortdesc: "Sleek, Trendy, Clean",
-        url: "images/wallet.png",
-      },
-      {
-        id: 5,
-        name: "Lady Handbags",
-        price: 230,
-        shortdesc: "Fabulous, Exotic, Classy",
-        url: "images/handbag.png",
-      },
-      {
-        id: 6,
-        name: "Casual Shirts",
-        price: 30,
-        shortdesc: "Neat, Sleek, Smart",
-        url: "images/shirt.png",
-      },
-    ],
+    user: null,
+    token: null,
+    products: [],
     cart: [],
+    orderdata: [],
+    orders: [],
+    shippingCharge: 25,
   },
+
   mutations: {
+    setUser(state, user) {
+      state.user = user;
+    },
+    setToken(state, token) {
+      state.token = token;
+    },
     addCartItem(state, item) {
       item.quantity = 1;
       state.cart.push(item);
@@ -66,5 +40,52 @@ export default createStore({
         return cartItem.id != item.id;
       });
     },
+    setProducts(state, products) {
+      state.products = products;
+    },
+    LogOut(state) {
+      state.user = null;
+      state.orderdata = [];
+      state.token = null;
+    },
+    setOrderDetails(state, order) {
+      state.orderdata = order;
+    },
+    setOrders(state, orders) {
+      state.orders = orders;
+    },
+    clearCart(state) {
+      state.cart = [];
+    },
   },
+  actions: {
+    getProducts({ commit }) {
+      axios.get("http://localhost:3000/api/products").then((response) => {
+        commit("setProducts", response.data.data);
+      });
+    },
+    getOrders({ commit }) {
+      axios
+        .get("http://localhost:3000/api/orders", {
+          headers: {
+            "Content-type": "Application/json",
+            Authorization: `Bearer ${this.state.token}`,
+          },
+        })
+        .then((response) => {
+          commit("setOrders", response.data.data);
+        });
+    },
+
+    async LogOut({ commit }) {
+      let user = null;
+      commit("LogOut", user);
+    },
+  },
+  getters: {
+    isLoggedIn(state) {
+      return state.token
+    },
+  },
+  plugins: [vuexPersist.plugin],
 });
