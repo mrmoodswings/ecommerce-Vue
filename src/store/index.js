@@ -14,7 +14,7 @@ export default createStore({
     orderdata: [],
     orders: [],
     shippingCharge: 25,
-    api_url:"http://localhost:3000/"
+    api_url:"http://18.217.25.79/"
   },
 
   mutations: {
