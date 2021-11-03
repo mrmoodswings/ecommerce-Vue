@@ -142,7 +142,7 @@ export default {
       e.preventDefault();
       this.v$.$validate();
       if (!this.v$.$error) {
-        const res = await fetch("http://localhost:3000/api/users", {
+        const res = await fetch(`${this.$store.state.api_url}api/users`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",

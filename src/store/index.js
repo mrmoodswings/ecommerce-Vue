@@ -14,6 +14,7 @@ export default createStore({
     orderdata: [],
     orders: [],
     shippingCharge: 25,
+    api_url:"http://localhost:3000/"
   },
 
   mutations: {
@@ -60,13 +61,13 @@ export default createStore({
   },
   actions: {
     getProducts({ commit }) {
-      axios.get("http://localhost:3000/api/products").then((response) => {
+      axios.get(`${this.state.api_url}api/products`).then((response) => {
         commit("setProducts", response.data.data);
       });
     },
     getOrders({ commit }) {
       axios
-        .get("http://localhost:3000/api/orders", {
+        .get(`${this.state.api_url}api/orders`, {
           headers: {
             "Content-type": "Application/json",
             Authorization: `Bearer ${this.state.token}`,

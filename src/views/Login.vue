@@ -98,7 +98,7 @@ export default {
       e.preventDefault();
       this.v$.$validate();
       if (!this.v$.$error) {
-        const res = await fetch("http://localhost:3000/api/auth/login", {
+        const res = await fetch(`${this.$store.state.api_url}api/auth/login`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",
