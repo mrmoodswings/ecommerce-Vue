@@ -49,7 +49,7 @@ export default {
   props: ["product"],
   setup(props) {
     const store = useStore();
-     const BASE_URL = `${store.state.api_url}uploads/`;
+     const BASE_URL = `${store.state.api_url}api/uploads/`;
     let cart = computed(() => {
       return store.state.cart;
     });

@@ -68,7 +68,7 @@ export default {
   setup(props) {
     let products = { ...props };
     const store = useStore();
-    const BASE_URL = `${store.state.api_url}uploads/`;
+    const BASE_URL = `${store.state.api_url}api/uploads/`;
     let cart = computed(function () {
       return store.state.cart;
     });
