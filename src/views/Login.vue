@@ -108,10 +108,14 @@ export default {
             password: this.state.password,
           }),
         });
-        const { user, token } = await res.json();
-        this.setUser(user);
-        this.setToken(token);
-        this.$router.push("/");
+        const data = await res.json();
+        if (data.status) {
+          this.setUser(data.user);
+          this.setToken(data.token);
+          this.$router.push("/");
+        }else{
+          alert('Invalid Username or password')
+        }
       }
     },
   },
